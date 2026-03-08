@@ -1,4 +1,5 @@
-// Import database and model
+require('dotenv').config();
+const { sequelize, Track } = require('./setup');
 
 // Seed data
 const sampleTracks = [
@@ -101,3 +102,18 @@ const sampleTracks = [
 ];
 
 // Seed database with sample data
+async function seedDatabase() {
+  try {
+    await sequelize.authenticate();
+    await sequelize.sync({ force: false });
+    const tracks = await Track.bulkCreate(sampleTracks);
+    console.log(`✅ Successfully seeded ${tracks.length} tracks into the database.`);
+  } catch (error) {
+    console.error('❌ Error seeding database:', error);
+  } finally {
+    await sequelize.close();
+    console.log('✅ Database connection closed.');
+  }
+}
+
+seedDatabase();
